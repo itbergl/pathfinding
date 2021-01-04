@@ -16,7 +16,7 @@ screen = pygame.display.set_mode((9*cell_size,10*cell_size))
 
 #Icon
 pygame.display.set_caption("Sodoku Player")
-icon = pygame.image.load("dep/sudoku.png")
+icon = pygame.image.load("images/icon.png")
 pygame.display.set_icon(icon)
 
 #Colours
