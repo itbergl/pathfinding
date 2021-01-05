@@ -20,8 +20,8 @@ icon = pygame.image.load("images/icon.png")
 pygame.display.set_icon(icon)
 
 #Screen
-cell_size = 20
-ncells = 30
+cell_size = 10
+ncells = 70
 line_colour = (200,200,200)
 screen = pygame.display.set_mode((ncells*cell_size,ncells*cell_size))
 
@@ -160,7 +160,8 @@ while RUNNING:
             
         
         if event.type == pygame.MOUSEBUTTONUP :
-            if event.button == 1 and wallMode:
+            if event.button == 1 or pygame.mouse.get_focused() == 0 :
+                
                 SELECTING = False
                 wallMode = False
                 pathfinding.board = np.copy(board_copy)

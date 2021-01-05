@@ -13,7 +13,6 @@ class pathfinding:
     explored = []
     inprogress = []
     node_from = []
-    dest_nodes = []
 
     # nodes
     probe = (-1,-1)
