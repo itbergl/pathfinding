@@ -1,11 +1,11 @@
 from os import path
 from numpy.lib.function_base import select
 import pygame
+import time
 from pygame.mixer import pause
 import os
 import numpy as np
 import time
-import math
 from pathfinding import pathfinding as pf
 import sys
 
@@ -13,6 +13,8 @@ import sys
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 pygame.init()
+start = 0
+end = 0
 
 #Icon
 pygame.display.set_caption("Path Finder")
@@ -20,10 +22,14 @@ icon = pygame.image.load("images/icon.png")
 pygame.display.set_icon(icon)
 
 #Screen
-cell_size = 10
-ncells = 70
-line_colour = (200,200,200)
+
+ncells = 5
+cell_size = int(900/ncells)
+
+line_colour = (255,255,255)
 screen = pygame.display.set_mode((ncells*cell_size,ncells*cell_size))
+# screen.set_alpha(None)
+pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN])
 
 #pathfinding class init
 pathfinding = pf(ncells)
@@ -53,32 +59,32 @@ def drawCell(xcord, ycord, colour):
     # screen.blit(static_num_dsp, ((xcord+0.1)*cell_size, (ycord+0.65)*cell_size))
 
 def drawBoard():
-    screen.fill((255,255,255))
+    screen.fill((220,220,220))
     for r in range(ncells):
         
-        for c in range(ncells):           
-            #   PROBING
-            if pathfinding.heuristicSum[r][c] != 999:
-                drawCell(r,c, (15,210,185))              
-            #   SEARCHED
-            if (r,c) in pathfinding.explored:
-                drawCell(r,c, (13,179,154)) 
-            #   PROBE
-            if (r,c) == pathfinding.probe:
-                drawCell(r,c, (0,255,255))                    
-            #   WALL
+        for c in range(ncells):  
+            #   WALL 
             if not board_copy[r][c]:
                 drawCell(r,c, (0,0,0)) 
-            #   DESTINATION
-            if (r,c)==pathfinding.dest:
-                drawCell(r,c, (255,0,0))
             #   START
-            if (r,c)==pathfinding.origin:
-                drawCell(r,c, (0,0,255)) 
+            elif (r,c)==pathfinding.origin:
+                drawCell(r,c, (0,0,255))   
+            #   DESTINATION
+            elif (r,c)==pathfinding.dest:
+                drawCell(r,c, (255,0,0))
             #   FINAL PATH
-            if (r,c) in final_path:
+            elif (r,c) in final_path:
                 drawCell(r,c, (0,255,0)) 
-            
+            #   PROBE
+            # if (r,c) == pathfinding.probe:
+            #     drawCell(r,c, (0,255,255))  
+            #   SEARHCED
+            elif (r,c) in pathfinding.explored:
+                drawCell(r,c, (13,179,154))    
+            #   PROBING
+            elif pathfinding.heuristicSum[r][c] != 999:
+                drawCell(r,c, (15,210,185))              
+                  
 
     for r in range(100):
         pygame.draw.line(screen,line_colour,(r*cell_size, 0), (r*cell_size, ncells*cell_size),1)
@@ -97,36 +103,67 @@ def selectCell(prev, pos, draw):
 def pathFind():
     global RUNNING
     SIMULATING = True
-    FINDING = True
-    node = pathfinding.dest
     global final_path
+    global start
+    global end
+    ONCE = True
+    start = time.time()
 
     while RUNNING and SIMULATING:
+        # wait()
+
+        if not pathfinding.nextStep() and ONCE:
+                ONCE = False
+                end = time.time()
+                tracePath()
+
+        for event in pygame.event.get():
+            #close game
+            if event.type == pygame.QUIT:
+                RUNNING = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    final_path = []
+                    pathfinding.reset(False)
+                    SIMULATING = False
+        drawBoard()                
+        pygame.display.update()
+
+def tracePath():
+    global RUNNING
+    TRACING = True
+    global final_path
+
+    final_path_full = pathfinding.getFinalPath()
+    index = len(final_path_full)-1
+    while RUNNING and TRACING:
         # wait()
         for event in pygame.event.get():
             #close game
             if event.type == pygame.QUIT:
                 RUNNING = False
-
-        if FINDING:
-            FINDING = pathfinding.nextStep()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    final_path = []
+                    pathfinding.reset(False)
+                    TRACING = False
+        if index > 0:
+            final_path.append(final_path_full[index])
+            index -= 1
+        
+            drawBoard()                
+            pygame.display.update()
         else:
-            node = pathfinding.addToPath(final_path, node)
-            if node == pathfinding.origin:
-                SIMULATING = False
-
-        drawBoard()                
-        pygame.display.update()
+            print("Time taken: " + str(int(1000*(end - start))) + " ms")
+            TRACING = False
 
 def wait():
-    print("--------")
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                print(pathfinding.heuristic)
                 return
     
 
@@ -152,18 +189,16 @@ while RUNNING:
                     mouse_pos = pygame.mouse.get_pos()
                     selectedCell = (int(mouse_pos[0]/cell_size), int(mouse_pos[1]/cell_size))
                     pathfinding.addOrigin(selectedCell)
-                    print(pathfinding.origin)
             elif event.button == 3:
                 mouse_pos = pygame.mouse.get_pos()
                 selectedCell = (int(mouse_pos[0]/cell_size), int(mouse_pos[1]/cell_size))
                 pathfinding.addDest(selectedCell)
             
         
-        if event.type == pygame.MOUSEBUTTONUP :
-            if event.button == 1 or pygame.mouse.get_focused() == 0 :
-                
+        if event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1 or pygame.mouse.get_focused() == 0 :               
                 SELECTING = False
-                wallMode = False
+                # wallMode = False
                 pathfinding.board = np.copy(board_copy)
 
                 
@@ -172,9 +207,17 @@ while RUNNING:
                 draw = False
                 wallMode = True
             if event.key == pygame.K_SPACE:
-                pathFind()
+                if pathfinding.origin != (-1,-1) and pathfinding.dest != (-1,-1):
+                    wallMode = False
+                    pathfinding.board = np.copy(board_copy)
+                    pathFind()       
             if event.key == pygame.K_LSHIFT:
                 wallMode = True
+            if event.key == pygame.K_ESCAPE:
+                final_path = []
+                pathfinding.reset(True)
+                board_copy = np.copy(pathfinding.board)
+                
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LCTRL:
                 draw = True
@@ -190,5 +233,5 @@ while RUNNING:
         selectedCell = (int(mouse_pos[0]/cell_size), int(mouse_pos[1]/cell_size))
         selectCell(prev_selected_cell, selectedCell, draw)
     
-    drawBoard()  
+    drawBoard()
     pygame.display.update()

@@ -1,7 +1,6 @@
 import math
 import numpy as np
 import sys
-from copy import copy, deepcopy
 
 class pathfinding:
 
@@ -21,6 +20,9 @@ class pathfinding:
 
     ncells = 0
 
+    # const
+    sqrt2 = math.sqrt(2)
+
     def __init__(self, ncells):
         self.ncells = ncells
         for r in range(ncells+1):
@@ -34,7 +36,8 @@ class pathfinding:
                 integer1.append(0)
                 integer2.append(0)
                 infinity.append(999)
-                node.append((-1,-1))    
+                node.append((-1,-1))
+                 
             self.board.append(bool)
             self.heuristic.append(integer1)
             self.dist_from_start.append(integer2)
@@ -46,8 +49,7 @@ class pathfinding:
     def selectPromising(self):
         MIN = sys.maxsize
         best = self.origin
-        for (x,y) in self.inprogress:
-            
+        for (x,y) in self.inprogress:           
             if self.heuristicSum[x][y] < MIN:
                 MIN = self.heuristicSum[x][y]
                 best = (x,y)
@@ -80,7 +82,6 @@ class pathfinding:
             
             if inboard and noWall and self.board[expx][expy]:
                 ret.append((expx,expy))
-        print(ret)
         return ret
             
             
@@ -97,7 +98,9 @@ class pathfinding:
 
         for (x,y) in neighbours:          
             if (x, y) not in self.explored:             
-                step = math.hypot(x-nodex, y-nodey)
+                step = 1
+                if x != nodex and y != nodey:
+                    step = self.sqrt2
 
                 if (x, y) not in self.inprogress:
                     self.inprogress.append((x, y))  
@@ -123,7 +126,38 @@ class pathfinding:
             if x == self.probe[0] and y == self.probe[1]:
                 self.inprogress.pop(index)
             index += 1   
-        
+    
+    def reset(self, fullreset):
+
+        self.heuristic = []
+        self.dist_from_start = []
+        self.heuristicSum = []
+        self.node_from = []
+        self.explored = []
+        self.probe = self.origin
+        self.inprogress = []
+        if fullreset:
+            self.board = []
+        for r in range(self.ncells+1):
+            integer1 = []
+            integer2 = []
+            infinity = []  
+            node = []
+            bool = []
+            for c in range(self.ncells+1):
+                bool.append(True)
+                integer1.append(0)
+                integer2.append(0)
+                infinity.append(999)
+                node.append((-1,-1))                
+            self.heuristic.append(integer1)
+            self.dist_from_start.append(integer2)
+            self.heuristicSum.append(infinity)      
+            self.node_from.append(node) 
+            if fullreset:
+                self.board.append(bool)
+    
+
 
     def nextStep(self):
         
@@ -132,9 +166,18 @@ class pathfinding:
             self.selectPromising()
             self.updateNeighbours()
             return True
-        print(self.explored)
         return False
-    
+        
+    def getFinalPath(self):
+        n = self.dest
+        list = []
+        while n != (self.origin):
+            list.append(n)
+            n = self.node_from[n[0]][n[1]]
+        return list
+
+
+
     def addOrigin(self, node):
         self.origin = node
         self.probe = node
@@ -144,12 +187,6 @@ class pathfinding:
     def addDest(self, node):
         self.dest = node
         # self.dest_nodes = self.getNeighbours(self.dest)
-
-    def termination(self):
-        for n in self.dest_nodes:
-            if n not in self.explored:
-                return False
-        return True
 
     def addToPath(self, list, node):
         prev_node = self.node_from[node[0]][node[1]]
