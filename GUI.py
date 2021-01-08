@@ -1,4 +1,5 @@
 from os import path
+from typing import Final
 from numpy.lib.function_base import select
 import pygame
 import time
@@ -23,7 +24,7 @@ pygame.display.set_icon(icon)
 
 #Screen
 
-ncells = 100
+ncells = 50
 cell_size = int(1000/ncells)
 
 line_colour = (255,255,255)
@@ -86,13 +87,8 @@ def drawBoard():
             elif pathfinding.heuristicSum[r][c] != sys.maxsize:
                 drawCell(r,c, (130,222,222))              
 
-    jndex = 0
-    while jndex < len(final_path)-1:
-        (x, y) = final_path[jndex]
-        (c, r) = final_path[jndex+1]
-        pygame.draw.line(screen, (0,255,0), ((x+0.5)*cell_size, (y+0.5)*cell_size), ((c+0.5)*cell_size, (r+0.5)*cell_size), 4)
-        print()
-        jndex+=1            
+    if len(final_path) > 2:
+        pygame.draw.lines(screen, (100,255,0), False, final_path, 4)       
 
     for r in range(ncells):
         pygame.draw.line(screen,line_colour,(r*cell_size, 0), (r*cell_size, ncells*cell_size),1)
@@ -156,7 +152,8 @@ def tracePath():
                     pathfinding.reset(False)
                     TRACING = False
         if index > -1:
-            final_path.append(final_path_full[index])
+            node_to_add = final_path_full[index]
+            final_path.append(((node_to_add[0]+0.5)*cell_size, (node_to_add[1]+0.5)*cell_size))
 
             index -= 1
 
