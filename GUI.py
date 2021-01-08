@@ -1,4 +1,4 @@
-#CUMS
+#CUMSlons
 from os import path
 from typing import Final
 from numpy.lib.function_base import select
