@@ -65,15 +65,8 @@ def drawBoard():
     for r in range(ncells):
         
         for c in range(ncells):  
-            #   WALL 
-            if not board_copy[r][c]:
-                drawCell(r,c, (75,75,75)) 
-            #   START
-            elif (r,c)==pathfinding.origin:
-                drawCell(r,c, (102,102,255))   
-            #   DESTINATION
-            elif (r,c)==pathfinding.dest:
-                drawCell(r,c, (255,153,153))
+  
+
             #   FINAL PATH
             # elif (r,c) in final_path:
             #     drawCell(r,c, (0,255,0)) 
@@ -81,14 +74,27 @@ def drawBoard():
             # if (r,c) == pathfinding.probe:
             #     drawCell(r,c, (0,255,255))  
             #   SEARHCED
-            elif pathfinding.heuristicSum[r][c] == -1:
+            if pathfinding.heuristicSum[r][c] == -1:
                 drawCell(r,c, (111,195,195))    
             #   PROBING
             elif pathfinding.heuristicSum[r][c] != sys.maxsize:
                 drawCell(r,c, (130,222,222))              
 
     if len(final_path) > 2:
-        pygame.draw.lines(screen, (100,255,0), False, final_path, 4)       
+        pygame.draw.lines(screen, (100,255,0), False, final_path, 4)     
+
+    for r in range(ncells):
+        
+        for c in range(ncells):  
+            #   WALL 
+            if not board_copy[r][c]:
+                drawCell(r,c, (75,75,75)) 
+            #   START
+            elif (r,c)==pathfinding.origin:
+                drawCell(r,c, (102,102,255))
+            #   DESTINATION
+            if (r,c)==pathfinding.dest:
+                drawCell(r,c, (255,153,153)) 
 
     for r in range(ncells):
         pygame.draw.line(screen,line_colour,(r*cell_size, 0), (r*cell_size, ncells*cell_size),1)

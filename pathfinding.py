@@ -178,12 +178,20 @@ class pathfinding:
 
 
     def addOrigin(self, node):
+        if node == self.origin or not self.board[node[0]][node[1]]:
+            node = (-1,-1)
+        if node == self.dest:
+            self.dest = (-1,-1)
         self.origin = node
         self.probe = node
         self.inprogress = []
         self.inprogress.append(node)
     
     def addDest(self, node):
+        if node == self.dest or not self.board[node[0]][node[1]]:
+            node = (-1,-1)
+        if node == self.origin:
+                self.origin = (-1,-1)
         self.dest = node
         # self.dest_nodes = self.getNeighbours(self.dest)
 
