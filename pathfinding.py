@@ -9,7 +9,6 @@ class pathfinding:
     dist_from_start = []
     heuristicSum = []
     board = []
-    explored = []
     inprogress = []
     node_from = []
 
@@ -19,6 +18,7 @@ class pathfinding:
     origin = (-1,-1)
 
     ncells = 0
+    
 
     # const
     sqrt2 = math.sqrt(2)
@@ -31,11 +31,12 @@ class pathfinding:
             integer2 = []
             infinity = []  
             node = []
-            for c in range(ncells+1):
-                bool.append(True)   
+            for c in range(ncells+1):                   
+
+                bool.append(True)
                 integer1.append(0)
                 integer2.append(0)
-                infinity.append(999)
+                infinity.append(sys.maxsize)
                 node.append((-1,-1))
                  
             self.board.append(bool)
@@ -65,7 +66,7 @@ class pathfinding:
                     direcitons.append((i,j))
 
         ret = []
-        print("F")
+        
         nodex = node[0]
         nodey = node[1]
 
@@ -97,12 +98,12 @@ class pathfinding:
         desty = self.dest[1]
 
         for (x,y) in neighbours:          
-            if (x, y) not in self.explored:             
+            if self.heuristicSum[x][y]!=-1:             
                 step = 1
                 if x != nodex and y != nodey:
                     step = self.sqrt2
 
-                if (x, y) not in self.inprogress:
+                if self.heuristicSum[x][y]==sys.maxsize:
                     self.inprogress.append((x, y))  
                     self.node_from[x][y] = self.probe
     
@@ -118,14 +119,12 @@ class pathfinding:
                         self.heuristicSum[x][y] = float(estimate)
                         self.dist_from_start[x][y] = float(self.dist_from_start[nodex][nodey]) + float(step)
                         self.node_from[x][y] = self.probe
-
-        self.explored.append(self.probe)
-
         index = 0
         for (x,y) in self.inprogress:                
             if x == self.probe[0] and y == self.probe[1]:
                 self.inprogress.pop(index)
             index += 1   
+        self.heuristicSum[self.probe[0]][self.probe[1]] = -1
     
     def reset(self, fullreset):
 
@@ -133,7 +132,6 @@ class pathfinding:
         self.dist_from_start = []
         self.heuristicSum = []
         self.node_from = []
-        self.explored = []
         self.probe = self.origin
         self.inprogress = []
         if fullreset:
@@ -148,7 +146,7 @@ class pathfinding:
                 bool.append(True)
                 integer1.append(0)
                 integer2.append(0)
-                infinity.append(999)
+                infinity.append(sys.maxsize)
                 node.append((-1,-1))                
             self.heuristic.append(integer1)
             self.dist_from_start.append(integer2)
