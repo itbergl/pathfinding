@@ -65,7 +65,7 @@ class pathfinding:
                     direcitons.append((i,j))
 
         ret = []
-
+        print("F")
         nodex = node[0]
         nodey = node[1]
 
