@@ -1,5 +1,3 @@
-from os import path
-from typing import Final
 from numpy.lib.function_base import select
 import pygame
 import time
