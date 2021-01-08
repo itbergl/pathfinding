@@ -32,7 +32,10 @@ class pathfinding:
             infinity = []  
             node = []
             for c in range(ncells+1):
-                bool.append(True)   
+                if c%2 == 0:
+                    bool.append(True)   
+                else:
+                    bool.append(False)
                 integer1.append(0)
                 integer2.append(0)
                 infinity.append(999)
@@ -65,7 +68,7 @@ class pathfinding:
                     direcitons.append((i,j))
 
         ret = []
-        print("F")
+        
         nodex = node[0]
         nodey = node[1]
 

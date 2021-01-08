@@ -23,7 +23,7 @@ pygame.display.set_icon(icon)
 
 #Screen
 
-ncells = 5
+ncells = 100
 cell_size = int(900/ncells)
 
 line_colour = (255,255,255)
