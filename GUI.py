@@ -23,8 +23,8 @@ pygame.display.set_icon(icon)
 
 #Screen
 
-ncells = 50
-cell_size = int(900/ncells)
+ncells = 100
+cell_size = int(1000/ncells)
 
 line_colour = (255,255,255)
 screen = pygame.display.set_mode((ncells*cell_size,ncells*cell_size))
@@ -59,36 +59,44 @@ def drawCell(xcord, ycord, colour):
     # screen.blit(static_num_dsp, ((xcord+0.1)*cell_size, (ycord+0.65)*cell_size))
 
 def drawBoard():
+    
     screen.fill((220,220,220))
     for r in range(ncells):
         
         for c in range(ncells):  
             #   WALL 
             if not board_copy[r][c]:
-                drawCell(r,c, (0,0,0)) 
+                drawCell(r,c, (75,75,75)) 
             #   START
             elif (r,c)==pathfinding.origin:
-                drawCell(r,c, (0,0,255))   
+                drawCell(r,c, (102,102,255))   
             #   DESTINATION
             elif (r,c)==pathfinding.dest:
-                drawCell(r,c, (255,0,0))
+                drawCell(r,c, (255,153,153))
             #   FINAL PATH
-            elif (r,c) in final_path:
-                drawCell(r,c, (0,255,0)) 
+            # elif (r,c) in final_path:
+            #     drawCell(r,c, (0,255,0)) 
             #   PROBE
             # if (r,c) == pathfinding.probe:
             #     drawCell(r,c, (0,255,255))  
             #   SEARHCED
             elif pathfinding.heuristicSum[r][c] == -1:
-                drawCell(r,c, (13,179,154))    
+                drawCell(r,c, (111,195,195))    
             #   PROBING
             elif pathfinding.heuristicSum[r][c] != sys.maxsize:
-                drawCell(r,c, (15,210,185))              
-                  
+                drawCell(r,c, (130,222,222))              
 
-    for r in range(100):
+    jndex = 0
+    while jndex < len(final_path)-1:
+        (x, y) = final_path[jndex]
+        (c, r) = final_path[jndex+1]
+        pygame.draw.line(screen, (0,255,0), ((x+0.5)*cell_size, (y+0.5)*cell_size), ((c+0.5)*cell_size, (r+0.5)*cell_size), 4)
+        print()
+        jndex+=1            
+
+    for r in range(ncells):
         pygame.draw.line(screen,line_colour,(r*cell_size, 0), (r*cell_size, ncells*cell_size),1)
-    for c in range(100):      
+    for c in range(ncells):      
         pygame.draw.line(screen,line_colour,(0, c*cell_size), (ncells*cell_size, c*cell_size),1)
 
 def selectCell(prev, pos, draw):
@@ -147,10 +155,11 @@ def tracePath():
                     final_path = []
                     pathfinding.reset(False)
                     TRACING = False
-        if index > 0:
+        if index > -1:
             final_path.append(final_path_full[index])
+
             index -= 1
-        
+
             drawBoard()                
             pygame.display.update()
         else: 

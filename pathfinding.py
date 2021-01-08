@@ -172,6 +172,7 @@ class pathfinding:
         while n != (self.origin):
             list.append(n)
             n = self.node_from[n[0]][n[1]]
+        list.append(self.origin)
         return list
 
 
