@@ -23,7 +23,7 @@ pygame.display.set_icon(icon)
 
 #Screen
 
-ncells = 100
+ncells = 50
 cell_size = int(900/ncells)
 
 line_colour = (255,255,255)
@@ -79,10 +79,10 @@ def drawBoard():
             # if (r,c) == pathfinding.probe:
             #     drawCell(r,c, (0,255,255))  
             #   SEARHCED
-            elif (r,c) in pathfinding.explored:
+            elif pathfinding.heuristicSum[r][c] == -1:
                 drawCell(r,c, (13,179,154))    
             #   PROBING
-            elif pathfinding.heuristicSum[r][c] != 999:
+            elif pathfinding.heuristicSum[r][c] != sys.maxsize:
                 drawCell(r,c, (15,210,185))              
                   
 
@@ -153,8 +153,11 @@ def tracePath():
         
             drawBoard()                
             pygame.display.update()
-        else:
+        else: 
             print("Time taken: " + str(int(1000*(end - start))) + " ms")
+            endx = pathfinding.dest[0]
+            endy = pathfinding.dest[1]
+            print("Path Length: " + str(round(pathfinding.dist_from_start[endx][endy],3)))
             TRACING = False
 
 def wait():
