@@ -22,7 +22,7 @@ pygame.display.set_icon(icon)
 
 #Screen
 
-ncells = 50
+ncells = 200
 cell_size = int(1000/ncells)
 
 line_colour = (255,255,255)
@@ -87,12 +87,13 @@ def drawBoard():
             #   WALL 
             if not board_copy[r][c]:
                 drawCell(r,c, (75,75,75)) 
-            #   START
-            elif (r,c)==pathfinding.origin:
-                drawCell(r,c, (102,102,255))
-            #   DESTINATION
-            if (r,c)==pathfinding.dest:
-                drawCell(r,c, (255,153,153)) 
+
+    #   START
+    (r,c)=pathfinding.origin
+    drawCell(r,c, (102,102,255))
+    #   DESTINATION
+    (r,c)=pathfinding.dest
+    drawCell(r,c, (255,153,153)) 
 
     for r in range(ncells):
         pygame.draw.line(screen,line_colour,(r*cell_size, 0), (r*cell_size, ncells*cell_size),1)
