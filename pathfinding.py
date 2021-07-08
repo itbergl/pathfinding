@@ -202,6 +202,3 @@ class pathfinding:
         if prev_node != self.origin:
             list.append(prev_node)
         return prev_node
-
-    
-
