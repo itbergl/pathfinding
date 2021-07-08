@@ -1,12 +1,13 @@
-from numpy.lib.function_base import select
-import pygame
-import time
-from pygame.mixer import pause
 import os
-import numpy as np
-import time
-from pathfinding import pathfinding as pf
 import sys
+import time
+
+import numpy as np
+import pygame
+from numpy.lib.function_base import select
+from pygame.mixer import pause
+
+from pathfinding import pathfinding as pf
 
 #hide default pygame message in console
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
@@ -22,7 +23,7 @@ pygame.display.set_icon(icon)
 
 #Screen
 
-ncells = 200
+ncells = 10
 cell_size = int(1000/ncells)
 
 line_colour = (255,255,255)
@@ -44,18 +45,18 @@ def drawCell(xcord, ycord, colour):
     square = pygame.Rect((xcord*cell_size, ycord*cell_size, cell_size, cell_size)) 
     pygame.draw.rect(screen,colour,square)
 
-    # #print heuristic
-    # num_font = pygame.font.Font('freesansbold.ttf', 10)
-    # static_num_dsp = num_font.render(str("est " + str(int(pathfinding.heuristic[xcord][ycord]*100)/100)), True, (0,0,0))
-    # screen.blit(static_num_dsp, ((xcord+0.1)*cell_size, (ycord+0.15)*cell_size))
+    #print heuristic
+    num_font = pygame.font.Font('freesansbold.ttf', 10)
+    static_num_dsp = num_font.render(str("est " + str(int(pathfinding.heuristic[xcord][ycord]*100)/100)), True, (0,0,0))
+    screen.blit(static_num_dsp, ((xcord+0.1)*cell_size, (ycord+0.15)*cell_size))
 
-    # static_num_dsp = num_font.render(str("path " + str(int(pathfinding.dist_from_start[xcord][ycord]*100)/100)), True, (0,0,0))
-    # # print("printing " + str((xcord, ycord)) + "  " + str(pathfinding.heuristic[xcord][ycord]))
-    # screen.blit(static_num_dsp, ((xcord+0.1)*cell_size, (ycord+0.4)*cell_size))
+    static_num_dsp = num_font.render(str("path " + str(int(pathfinding.dist_from_start[xcord][ycord]*100)/100)), True, (0,0,0))
+    # print("printing " + str((xcord, ycord)) + "  " + str(pathfinding.heuristic[xcord][ycord]))
+    screen.blit(static_num_dsp, ((xcord+0.1)*cell_size, (ycord+0.4)*cell_size))
 
-    # static_num_dsp = num_font.render(str("tot " + str(int(pathfinding.heuristicSum[xcord][ycord]*100)/100)), True, (0,0,0))
-    # # print("printing " + str((xcord, ycord)) + "  " + str(pathfinding.heuristic[xcord][ycord]))
-    # screen.blit(static_num_dsp, ((xcord+0.1)*cell_size, (ycord+0.65)*cell_size))
+    static_num_dsp = num_font.render(str("tot " + str(int(pathfinding.heuristicSum[xcord][ycord]*100)/100)), True, (0,0,0))
+    # print("printing " + str((xcord, ycord)) + "  " + str(pathfinding.heuristic[xcord][ycord]))
+    screen.blit(static_num_dsp, ((xcord+0.1)*cell_size, (ycord+0.65)*cell_size))
 
 def drawBoard():
     

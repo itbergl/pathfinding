@@ -1,6 +1,8 @@
 import math
-import numpy as np
 import sys
+
+import numpy as np
+
 
 class pathfinding:
 
